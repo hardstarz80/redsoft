@@ -3,13 +3,13 @@
 //найти и убить файлы от удаленных товаров (или от старого сайта),  которые лежат вместе с картинками товаров в одной директории на диске
 //
 //Есть сайт на битриксе, в каталоге сто тысяч товаров
-//у каждого есть картинки две родные (PREVIEW_PICTURE и DETAIL_PICTURE) 
+//у каждого есть картинки две родные (PREVIEW_PICTURE и DETAIL_PICTURE)
 //и дополнительно могут быть поля типа файл (в том числе множественные)
-//задача:  
+//задача:
 //вычистить все файлы, у которых нет никаких связей с элементами инфоблоков  (по факту обычно это файлы от удаленных товаров или от старого сайта)
 //1) нужно написать алгоритм как будешь решать
 //2) написать такое решение
-//Задачу можно реализовывать как standalone, так и используя Bitrix API 
+//Задачу можно реализовывать как standalone, так и используя Bitrix API
 
 set_time_limit(0);
 define("NO_KEEP_STATISTIC", true);
@@ -25,6 +25,22 @@ while ($row = $result->Fetch()) {
 $rootDirPath = $_SERVER['DOCUMENT_ROOT'] . "/upload/iblock";
 $hRootDir = opendir($rootDirPath);
 $count = 0;
+
+$hSubDir = opendir($rootDirPath);
+while (false !== ($fileName = readdir($hSubDir))) {
+    if ($fileName == '.' || $fileName == '..')
+        continue;
+    if (array_key_exists($fileName, $arFilesCache)) {
+        continue;
+    }
+    $fullPath = "$rootDirPath";
+    //   if (unlink($fullPath)) { тестовый режим
+    echo 'Для удаления: ' . $fullPath . PHP_EOL;
+    $count++;
+    //   }
+}
+closedir($hSubDir);
+
 while (false !== ($subDirName = readdir($hRootDir))) {
     if ($subDirName == '.' || $subDirName == '..')
         continue;
